@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "redis.fullname" . }}-deployment
+  namespace: {{ .Values.namespace }}
+  labels:
+    app: {{ include "redis.fullname" . }}-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "redis.fullname" . }}-app
+  template:
+    metadata:
+      annotations:
+      labels:
+        app: {{ include "redis.fullname" . }}-app
+    spec:
+      containers:
+      - name: service
+        image: {{ .Values.image.repository }}:{{ .Values.image.tag  }}
+        imagePullPolicy: IfNotPresent
+
+        ports:
+        - containerPort: 6379
+          name: http
+          protocol: TCP
+      nodeSelector:
+        "beta.kubernetes.io/os": linux
